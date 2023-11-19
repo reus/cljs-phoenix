@@ -178,9 +178,11 @@
       ;; else
       (let [current-window-hash (some-> (.focused js/Window) (.hash))
             windows (.windows app #js {:visible true})]
-        (when-let [other-windows (seq (filter (fn [w] (not= current-window-hash (.hash w)))
-                                              windows))]
-          (.focus (first other-windows)))))
+        (if (seq windows)
+          (when-let [other-windows (seq (filter (fn [w] (not= current-window-hash (.hash w)))
+                                                windows))]
+            (.focus (first other-windows)))
+          (.focus app))))
     (.launch js/App title #js {:focus true})))
 
 ;; Special key on ergodox ez hits all these buttons at once. Use this
