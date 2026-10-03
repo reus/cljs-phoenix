@@ -59,6 +59,7 @@ Window.screen = function() {}
 Window.app = function() {}
 Window.isNormal = function() {}
 Window.focus = function() {}
+Window.raise = function() {}
 Window.focusClosestNeighbor = function() {}
 Window.neighbors = function() {}
 

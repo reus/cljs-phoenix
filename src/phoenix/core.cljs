@@ -3,7 +3,7 @@
 
 (def keybindings
   {"1" "Google Chrome"
-   "2" "iTerm"
+   "2" "iTerm2"
    "3" "Emacs"
    "4" "Terminal"
    "5" "Firefox"
@@ -52,7 +52,7 @@
 
 (defn app-width-adjustment
   [app screen-width]
-  (get-in {"iTerm" {1440 8}
+  (get-in {"iTerm2" {1440 8}
            "Emacs" {1440 -4}}
           [(.name app) screen-width]
           0))
@@ -176,12 +176,20 @@
     (case title
       "Finder" (.focus app)  ;; Just focus the Finder
       ;; else
+      ;; Only consider standard windows: iTerm2 has an invisible
+      ;; non-standard window that would otherwise get focused. Windows on
+      ;; other Spaces aren't listed at all, so fall back to focusing the
+      ;; app, which makes macOS switch to a Space with one of its windows.
       (let [current-window-hash (some-> (.focused js/Window) (.hash))
-            windows (.windows app #js {:visible true})]
+            windows (filter #(.isNormal %) (.windows app #js {:visible true}))]
         (if (seq windows)
           (when-let [other-windows (seq (filter (fn [w] (not= current-window-hash (.hash w)))
                                                 windows))]
-            (.focus (first other-windows)))
+            ;; focus alone can leave the window behind others on recent
+            ;; macOS (iTerm2 brings a hidden window forward on activation)
+            (let [window (first other-windows)]
+              (.focus window)
+              (.raise window)))
           (.focus app))))
     (.launch js/App title #js {:focus true})))
 
