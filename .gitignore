@@ -5,3 +5,4 @@ out
 node_modules
 .clj-kondo
 .lsp
+tools/window-spaces

@@ -12,6 +12,9 @@ release: clean cljs-release
 install: release
 	cp out/main.js ~/.phoenix.js
 
+tools/window-spaces: tools/window-spaces.swift
+	swiftc -O -o $@ $<
+
 clean:
 	rm -rf out
 
